@@ -1,0 +1,3 @@
+.tmpmail*
+.bundle
+vendor/bundle*
