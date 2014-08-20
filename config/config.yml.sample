@@ -1,0 +1,10 @@
+---
+crm:
+    baseurl: http://url.of.your.fatfreecrm.server
+    login: johnsmith
+    password: ****
+imap:
+    pattern: '.*'
+    server: hostname.of.you.imap.server
+    login: johnsmith
+    password: ****
