@@ -1,16 +1,26 @@
-* Add various actions (init)
-* all - get messages for all boxes
-* new - get new messages (but keep ID for each mailbox)
+TODO
+====
 
-* Read configuration file
-  * it must contain a filter (regexp) or an ignore list per mailbox ?
+## Features
+
+* Add POP3 server support
 
 
-préalable
-liste des contacts dans le CRM
+## Documentation
 
-on veut repérer uniquement les contacts qui n'y existent pas
+* Write a tutorial (installation, configuration, usage).
 
-on zappe les contacts existants (on considere qu'ils sont déjà suivis)
 
-pour un contacts inexistant, on liste tous les mails 
+## Command line
+
+* Add more actions :
+  * init - create empty configuration files
+  * all - get messages for all boxes
+  * new (by default) - get only new messages since last check
+
+
+## Configuration
+
+* Add regexp support for ignore list
+* Add an ignore list (and/or regexp) for mailboxes
+
