@@ -1,7 +1,7 @@
 Epafh
 =====
 
-Epaph (pronounce \[epafí\]), is a tool to extract all email addresses from your
+Epafh (pronounce *\[epafí\]*), is a tool to extract all email addresses from your
 mail boxes. Thus helping you into filling your CRM tool.
 
 It starts by fetching existing email addresses from your CRM, then it connects
