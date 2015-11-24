@@ -12,3 +12,17 @@ For the moment it only supports IMAP mail servers and FatFreeCRM servers.
 
 The next move on the roadmap is POP3 support and maybe some other CRM.
 
+## Installation
+
+With ruby installed on your system, simply type :
+
+    $ gem install epafh
+
+## Usage
+
+TODO: Write usage instructions here
+
+## License
+
+The gem is available as open source under the terms of the [LGPL-3 License](http://opensource.org/licenses/LGPL-3.0).
+
