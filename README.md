@@ -1,7 +1,8 @@
 Epafh (Επαφή) 
 =============
 
-![](https://api.travis-ci.org/glenux/epafh.png?branch=master)
+[![Travis-CI](https://api.travis-ci.org/glenux/epafh.png?branch=master)](https://travis-ci.org)
+[![Code Climate](https://codeclimate.com/github/glenux/epafh/badges/gpa.svg)](https://codeclimate.com/github/glenux/epafh)
 
 Epafh (pronounce *\[epafí\]*), is a tool to extract all email addresses from your
 mail boxes. Thus helping you into filling your CRM tool.
