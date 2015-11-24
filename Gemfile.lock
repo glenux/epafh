@@ -70,7 +70,7 @@ DEPENDENCIES
   epafh!
   hash_validator
   json
-  mail (>= 2.4.4)
+  mail (~> 2.6.3)
   mechanize
   pry
   pry-rescue
@@ -78,4 +78,4 @@ DEPENDENCIES
   thor
 
 BUNDLED WITH
-   1.10.6
+   1.10.5
