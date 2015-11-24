@@ -1,3 +1,8 @@
+PATH
+  remote: .
+  specs:
+    epafh (0.1.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -9,14 +14,11 @@ GEM
     hash_validator (0.3.0)
     http-cookie (1.0.2)
       domain_name (~> 0.5)
-    i18n (0.6.0)
     interception (0.5)
     json (1.8.3)
     json (1.8.3-java)
-    mail (2.3.0)
-      i18n (>= 0.4.0)
-      mime-types (~> 1.16)
-      treetop (~> 1.4.8)
+    mail (2.6.3)
+      mime-types (>= 1.16, < 3)
     mechanize (2.7.2)
       domain_name (~> 0.5, >= 0.5.1)
       http-cookie (~> 1.0.0)
@@ -35,7 +37,6 @@ GEM
       mini_portile (= 0.6.0)
     nokogiri (1.6.2.1-java)
     ntlm-http (0.1.1)
-    polyglot (0.3.3)
     pry (0.10.0)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
@@ -48,13 +49,11 @@ GEM
     pry-rescue (1.4.2)
       interception (>= 0.5)
       pry
+    rake (10.4.2)
     slop (3.5.0)
     spoon (0.0.4)
       ffi
     thor (0.14.6)
-    treetop (1.4.10)
-      polyglot
-      polyglot (>= 0.3.1)
     unf (0.1.4)
       unf_ext
     unf (0.1.4-java)
@@ -66,13 +65,16 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  bundler (~> 1.10)
   colorize
+  epafh!
   hash_validator
   json
-  mail
+  mail (>= 2.4.4)
   mechanize
   pry
   pry-rescue
+  rake (~> 10.0)
   thor
 
 BUNDLED WITH

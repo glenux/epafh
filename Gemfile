@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
 ## TODO: move to epafh.gemspect
-gem 'mail'
+gem 'mail', '~> 2.6.3'
 gem 'json'
 gem 'thor'
 gem 'pry'
