@@ -1,4 +1,4 @@
-require "Epafh/version"
+require "epafh/version"
 
 module Epafh
   # Your code goes here...

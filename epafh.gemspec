@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'epafh/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "Epafh"
+  spec.name          = "epafh"
   spec.version       = Epafh::VERSION
   spec.authors       = ["@@@No user configured@@@"]
   spec.email         = ["@@@No user configured@@@"]
