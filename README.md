@@ -1,5 +1,7 @@
-Epafh (Επαφή)
+Epafh (Επαφή) 
 =============
+
+![](https://api.travis-ci.org/backlogs/redmine_backlogs.png?branch=master)
 
 Epafh (pronounce *\[epafí\]*), is a tool to extract all email addresses from your
 mail boxes. Thus helping you into filling your CRM tool.
