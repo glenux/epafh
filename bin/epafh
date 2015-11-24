@@ -29,9 +29,9 @@ class Hash
   end
 end
 
-module Epafi
-	EPAFI_CONFIG_FILE = File.join(ENV['HOME'],'.epafi','config.yml')
-	EPAFI_IGNORE_FILE = File.join(ENV['HOME'],'.epafi','ignore.yml')
+module Epafh
+	EPAFI_CONFIG_FILE = File.join(ENV['HOME'],'.epafh','config.yml')
+	EPAFI_IGNORE_FILE = File.join(ENV['HOME'],'.epafh','ignore.yml')
 
 	class ContactManager
 
@@ -362,5 +362,5 @@ module Epafi
 	end
 end
 
-Epafi::Crawler.start
+Epafh::Crawler.start
 
