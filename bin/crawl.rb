@@ -1,27 +1,32 @@
 #!/usr/bin/env ruby
 
-require 'bundler/setup'
-Bundler.require
+#require 'bundler/setup'
+#Bundler.require
+
+require 'pry'
 require 'zlib'
 require 'net/imap'
 require 'pp'
-require 'pry'
 require 'mechanize'
 require 'yaml'
 require 'hash_validator'
 require 'uri'
+require 'thor'
+require 'json'
+require 'mail'
+require 'colorize'
 
 #Net::IMAP.debug = true
 
 class Hash
-  	#take keys of hash and transform those to a symbols
-  	def self.transform_keys_to_symbols(value)
-    	return value if not value.is_a?(Hash)
-    	hash = value.inject({}) do |memo,(k,v)| 
+  #take keys of hash and transform those to a symbols
+  def self.transform_keys_to_symbols(value)
+    return value if not value.is_a?(Hash)
+    hash = value.inject({}) do |memo,(k,v)| 
 			memo[k.to_sym] = Hash.transform_keys_to_symbols(v); memo
 		end
-    	return hash
-  	end
+    return hash
+  end
 end
 
 module Epafi
@@ -64,13 +69,13 @@ module Epafi
 
 		def connect!
 			@browser.get(@config[:crm][:baseurl] + CRM_LOGIN_URL) do |page|
-				my_page = page.form_with(:action => '/authentication') do |f|
+				page.form_with(action: '/authentication') do |f|
 					f['authentication[username]'] = @config[:crm][:login]
 					f['authentication[password]'] = @config[:crm][:password]
 				end.click_button
 			end
 
-		rescue Mechanize::ResponseCodeError => e
+		rescue Mechanize::ResponseCodeError
 			raise "Authentication error. Verify your credentials." 
 		end
 
@@ -142,8 +147,8 @@ module Epafi
 		TMPMAIL_FILE = '.tmpmail'
 
 		def initialize config
-    		@saved_key = 'RFC822'
-    		@filter_headers = 'BODY[HEADER.FIELDS (FROM TO Subject)]'.upcase
+    	@saved_key = 'RFC822'
+    	@filter_headers = 'BODY[HEADER.FIELDS (FROM TO Subject)]'.upcase
 			@config = config
 			@imap = nil
 			@contact_manager = ContactManager.new config
@@ -151,31 +156,36 @@ module Epafi
 
 
 		def connect!
-    		@imap = Net::IMAP.new(
+    	@imap = Net::IMAP.new(
 				@config[:imap][:server], 
-				:ssl => {:verify_mode => OpenSSL::SSL::VERIFY_NONE},
-				:port => 993
+				ssl: {verify_mode: OpenSSL::SSL::VERIFY_NONE},
+				port: 993
 			)
-    		@imap.login(@config[:imap][:login], @config[:imap][:password])
+    	@imap.login(@config[:imap][:login], @config[:imap][:password])
+      #@imap.select(SOURCE_MAILBOX)
 		end
 
 		def disconnect!
-    		imap.logout
-    		imap.disconnect
+    	imap.logout
+    	imap.disconnect
 		end
 
 		MAIL_REGEXP = /\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/
 
 		def examine_message message
-        	m = Mail.read_from_string message.attr[@saved_key]
+      m = Mail.read_from_string message.attr[@saved_key]
 			return if m.from.nil?
 			return if m.to.nil?
 
 
 			emails = Set.new
-			emails.merge m.from
-			emails.merge m.to if m.to
-			emails.merge m.cc if m.cc
+      begin
+			  emails.merge m.from
+			  emails.merge [m.to].flatten if m.to
+			  emails.merge [m.cc].flatten if m.cc
+      rescue => e
+        binding.pry
+      end
 
 			body_emails = Set.new
 			m.body.parts.each do |part|
@@ -215,9 +225,9 @@ module Epafi
 				all_addr.each do |key, list|
 					list.each do |addr|
 						addr_str = if remaining_emails.map{|e,t| e}.include? addr then
-								   	   addr.yellow.on_black
-							   	   else addr
-							   	   end
+								   	     addr.yellow.on_black
+							   	     else addr
+							   	     end
 						str = "%4s: %s" % [key.to_s.upcase, addr_str]
 						puts str
 					end
@@ -252,7 +262,7 @@ module Epafi
 						system "formail < #{TMPMAIL_FILE}.2 > #{TMPMAIL_FILE}"
 						system "mutt -R -f #{TMPMAIL_FILE}"
 					end
-				rescue Encoding::ConverterNotFoundError => e
+				rescue Encoding::ConverterNotFoundError
 					STDERR.puts "ERROR: encoding problem in email. Unable to convert."
 				end
 			end
@@ -261,34 +271,36 @@ module Epafi
 		end
 
 		def examine_all
-    		@imap.list('', '*').each do |mailbox|
-				puts "\nMAILBOX #{mailbox.name}"
+    	@imap.list('', '*').each do |mailbox|
+				puts "\nMAILBOX #{mailbox.name}".yellow
 				next unless mailbox.name =~ /#{@config[:imap][:pattern]}/
-      			@imap.examine mailbox.name
+      	@imap.examine mailbox.name
 
-        		puts "Searching #{mailbox.name}"
-      			messages_in_mailbox = @imap.responses['EXISTS'][0]
-      			unless messages_in_mailbox
-        			say "#{mailbox.name} does not have any messages"
+        puts "Searching #{mailbox.name}"
+      	messages_in_mailbox = @imap.responses['EXISTS'][0]
+      	if not messages_in_mailbox then
+        	say "#{mailbox.name} does not have any messages"
 					next
 				end
 
-        		ids = @imap.search('SINCE 1-Jan-2001')
+        @imap.select mailbox.name #GYR: TEST
+        ids = @imap.search('SINCE 1-Jan-2001')
 				# NOT OR TO "@agilefant.org" CC "@agilefant.org"')
-        		if ids.empty?
-          			puts "\tFound no messages"
+        if ids.empty?
+          puts "\tFound no messages"
 				else
-					examine_message_list ids
+					examine_message_list mailbox.name, ids
 				end
-    		end
+    	end
 		end
 
-		def examine_message_list ids
-        	ids.each do |id|
+		def examine_message_list mailbox_name, ids
+      ids.each do |id|
+        @imap.select mailbox_name #GYR: TEST
 				message = imap.fetch(id, [@saved_key])[0]
 				examine_message message
-        	end 
-		rescue IOError => e
+      end 
+		rescue IOError
 			# re-connect and try again
 			connect!
 			retry
@@ -299,13 +311,13 @@ module Epafi
 
 		CONFIG_FILE = 'config/secrey.yml'
 
-  		include Thor::Actions
-  		default_task :crawl
+  	include Thor::Actions
+  	default_task :crawl
 
 
-  		desc 'crawl', 'Crawls email to save mails'
-  		def crawl
-    		saved_info = []
+  	desc 'crawl', 'Crawls email to save mails'
+  	def crawl
+    	#saved_info = []
 			parse_configuration
 
 			## Run application
@@ -315,7 +327,7 @@ module Epafi
 			app.examine_all
 			#pp saved_info
 			app.disconnect!
-  		end
+  	end
 
 		def initialize *args
 			@config = {}
@@ -351,3 +363,4 @@ module Epafi
 end
 
 Epafi::Crawler.start
+

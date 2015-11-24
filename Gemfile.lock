@@ -10,8 +10,9 @@ GEM
     http-cookie (1.0.2)
       domain_name (~> 0.5)
     i18n (0.6.0)
-    json (1.6.2)
-    json (1.6.2-java)
+    interception (0.5)
+    json (1.8.3)
+    json (1.8.3-java)
     mail (2.3.0)
       i18n (>= 0.4.0)
       mime-types (~> 1.16)
@@ -44,6 +45,9 @@ GEM
       method_source (~> 0.8.1)
       slop (~> 3.4)
       spoon (~> 0.0)
+    pry-rescue (1.4.2)
+      interception (>= 0.5)
+      pry
     slop (3.5.0)
     spoon (0.0.4)
       ffi
@@ -68,4 +72,8 @@ DEPENDENCIES
   mail
   mechanize
   pry
+  pry-rescue
   thor
+
+BUNDLED WITH
+   1.10.6
