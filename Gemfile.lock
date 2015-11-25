@@ -2,80 +2,68 @@ PATH
   remote: .
   specs:
     epafh (0.1.0)
+      colorize
+      hash_validator
+      json
+      mail (~> 2.6.3)
+      mechanize
+      pry
+      pry-rescue
+      thor
 
 GEM
   remote: https://rubygems.org/
   specs:
     coderay (1.1.0)
-    colorize (0.7.3)
-    domain_name (0.5.19)
+    colorize (0.7.7)
+    domain_name (0.5.25)
       unf (>= 0.0.5, < 1.0.0)
-    ffi (1.9.3-java)
-    hash_validator (0.3.0)
+    hash_validator (0.4.0)
     http-cookie (1.0.2)
       domain_name (~> 0.5)
     interception (0.5)
     json (1.8.3)
-    json (1.8.3-java)
     mail (2.6.3)
       mime-types (>= 1.16, < 3)
-    mechanize (2.7.2)
+    mechanize (2.7.3)
       domain_name (~> 0.5, >= 0.5.1)
-      http-cookie (~> 1.0.0)
-      mime-types (~> 1.17, >= 1.17.2)
+      http-cookie (~> 1.0)
+      mime-types (~> 2.0)
       net-http-digest_auth (~> 1.1, >= 1.1.1)
       net-http-persistent (~> 2.5, >= 2.5.2)
       nokogiri (~> 1.4)
       ntlm-http (~> 0.1, >= 0.1.1)
       webrobots (>= 0.0.9, < 0.2)
     method_source (0.8.2)
-    mime-types (1.17.2)
-    mini_portile (0.6.0)
+    mime-types (2.99)
+    mini_portile (0.6.2)
     net-http-digest_auth (1.4)
     net-http-persistent (2.9.4)
-    nokogiri (1.6.2.1)
-      mini_portile (= 0.6.0)
-    nokogiri (1.6.2.1-java)
+    nokogiri (1.6.6.4)
+      mini_portile (~> 0.6.0)
     ntlm-http (0.1.1)
-    pry (0.10.0)
+    pry (0.10.3)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
-    pry (0.10.0-java)
-      coderay (~> 1.1.0)
-      method_source (~> 0.8.1)
-      slop (~> 3.4)
-      spoon (~> 0.0)
     pry-rescue (1.4.2)
       interception (>= 0.5)
       pry
     rake (10.4.2)
-    slop (3.5.0)
-    spoon (0.0.4)
-      ffi
-    thor (0.14.6)
+    slop (3.6.0)
+    thor (0.19.1)
     unf (0.1.4)
       unf_ext
-    unf (0.1.4-java)
-    unf_ext (0.0.6)
+    unf_ext (0.0.7.1)
     webrobots (0.1.1)
 
 PLATFORMS
-  java
   ruby
 
 DEPENDENCIES
   bundler (~> 1.10)
-  colorize
   epafh!
-  hash_validator
-  json
-  mail (~> 2.6.3)
-  mechanize
-  pry
-  pry-rescue
   rake (~> 10.0)
-  thor
 
 BUNDLED WITH
    1.10.5
