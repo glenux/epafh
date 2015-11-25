@@ -1,7 +1,7 @@
 Epafh (Επαφή) 
 =============
 
-[![Travis-CI](https://api.travis-ci.org/glenux/epafh.png?branch=master)](https://travis-ci.org)
+[![Travis-CI](https://api.travis-ci.org/glenux/epafh.png?branch=master)](https://travis-ci.org/glenux/epafh)
 [![Code Climate](https://codeclimate.com/github/glenux/epafh/badges/gpa.svg)](https://codeclimate.com/github/glenux/epafh)
 
 Epafh (pronounce *\[epafí\]*), is a tool to extract all email addresses from your
