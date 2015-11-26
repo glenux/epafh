@@ -4,6 +4,7 @@ PATH
     epafh (0.1.0)
       colorize
       hash_validator
+      highline
       json
       mail (~> 2.6.3)
       mechanize
@@ -19,6 +20,7 @@ GEM
     domain_name (0.5.25)
       unf (>= 0.0.5, < 1.0.0)
     hash_validator (0.4.0)
+    highline (1.7.8)
     http-cookie (1.0.2)
       domain_name (~> 0.5)
     interception (0.5)
