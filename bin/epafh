@@ -19,6 +19,9 @@ require 'epafh'
 
 #Net::IMAP.debug = true
 
-
-Epafh::App.start(ARGV)
-
+begin
+  Epafh::App.start(ARGV)
+rescue Interrupt
+  puts " Interrupt! Exiting."
+  exit 1
+end
