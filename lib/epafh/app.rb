@@ -11,7 +11,7 @@ class Epafh::App < Thor
       'password' => ''
     },
     'crm' => {
-			'baseurl'  => 'http://crm.gnuside.com/',
+			'baseurl'  => '',
 			'login'    => '',
 			'password' => ''
     } 
