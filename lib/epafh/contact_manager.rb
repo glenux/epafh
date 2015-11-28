@@ -17,8 +17,8 @@ class Epafh::ContactManager
 		## Load configuration file
 		#
 
-		unless File.exist? EPAFI_CONFIG_FILE then
-			raise "Unable to find configuration file #{EPAFI_CONFIG_FILE}" 
+		unless File.exist? Epafh::EPAFI_CONFIG_FILE then
+			raise "Unable to find configuration file #{Epafh::EPAFI_CONFIG_FILE}" 
 		end
 		@config = config
 
@@ -45,8 +45,8 @@ class Epafh::ContactManager
 	end
 
 	def load_ignore
-		if File.exist? EPAFI_IGNORE_FILE
-			ignore_list = YAML.load_file(EPAFI_IGNORE_FILE)
+		if File.exist? Epafh::EPAFI_IGNORE_FILE
+			ignore_list = YAML.load_file(Epafh::EPAFI_IGNORE_FILE)
 			ignore_list.each do |email|
 				@ignore_list << email.strip.downcase
 			end
@@ -92,7 +92,7 @@ class Epafh::ContactManager
 	 	[emails].flatten.each do |mail|
 			@ignore_list << mail.strip.downcase
 		end
-		File.open(EPAFI_IGNORE_FILE, 'w') do |f| 
+		File.open(Epafh::EPAFI_IGNORE_FILE, 'w') do |f| 
 			f.write @ignore_list.to_a.to_yaml 
 		end
 	end

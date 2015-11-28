@@ -49,7 +49,7 @@ class Epafh::App < Thor
 		parse_configuration
 
 		## Run application
-		app = Crawler.new @config
+		app = Epafh::Crawler.new @config
 
 		app.connect!
 		app.examine_all

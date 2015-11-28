@@ -4,15 +4,15 @@ class Epafh::Crawler
 	attr_reader :contacts
 
 	TMPMAIL_FILE = '.tmpmail'
+	MAIL_REGEXP = /\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/
 
 	def initialize config
     @saved_key = 'RFC822'
     @filter_headers = 'BODY[HEADER.FIELDS (FROM TO Subject)]'.upcase
 		@config = config
 		@imap = nil
-		@contact_manager = ContactManager.new config
+		@contact_manager = Epafh::ContactManager.new config
 	end
-
 
 	def connect!
     @imap = Net::IMAP.new(
@@ -29,83 +29,45 @@ class Epafh::Crawler
     imap.disconnect
 	end
 
-	MAIL_REGEXP = /\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/
-
 	def examine_message message
     m = Mail.read_from_string message.attr[@saved_key]
 		return if m.from.nil?
 		return if m.to.nil?
 
+		body_emails = extract_body_mail m.body.parts
 
+    ## Create association between extracted addreses and email part
+		mail_struct = { 
+			from: [m.from || []].flatten,
+			to:   [m.to || []].flatten,
+			cc:   [m.cc || []].flatten,
+			body: (body_emails.to_a || [])
+		}
 		emails = Set.new
-		emails.merge m.from
-		emails.merge [m.to].flatten if m.to
-		emails.merge [m.cc].flatten if m.cc
+		mail_struct.each {|key, val|  emails.merge val }
+		remaining_emails = emails.reject{|e| @contact_manager.include?(e) }
 
-		body_emails = Set.new
-		m.body.parts.each do |part|
-			next if part.content_type != 'text/plain'
-
-			#body_emails = m.body.decoded.scan MAIL_REGEXP
-			part_emails = part.decoded.scan MAIL_REGEXP
-			#pp body_emails
-			if not part_emails.empty? then
-				body_emails.merge part_emails
-			end
-		end
-		emails.merge body_emails
-
-		# puts emails.to_a.join(' , ')
-		remaining_emails = (
-			emails
-			.map{ |e| [e, (@contact_manager.include? e)] }
-			.select{ |e,t| !t }
-		)
-		seen_emails = (
-			remaining_emails
-			.empty? 
-		)
-		# puts @contacts.to_a.join(', ')
-		if seen_emails then
+		# Skip examination of no addresses are remaining
+		if remaining_emails.empty? then
 			print "."
 			return
-		else
-			puts ""
-			all_addr = { 
-				from: (m.from || []),
-				to: (m.to || []),
-				cc: (m.cc || []),
-				body: (body_emails || [])
-			}
-			all_addr.each do |key, list|
-				list.each do |addr|
-					addr_str = if remaining_emails.map{|e,t| e}.include? addr then
-								   	   addr.yellow.on_black
-							   	   else addr
-							   	   end
-					str = "%4s: %s" % [key.to_s.upcase, addr_str]
-					puts str
-				end
-			end
-			puts ""
-			#puts " ORIGINAL EMAILS: #{emails.to_a.join(', ')}"
-			#puts "REMAINING EMAILS: #{remaining_emails.map{|e,t| e}.join(', ')}".yellow.on_black
-			#puts "     SEEN EMAILS: #{seen_emails}"
 		end
+
+		display_header mail_struct, remaining_emails
 
 		while true
 			begin
 				puts "\n### #{m.subject}"
-				print "#{m.from.join(',')} --> #{m.to.join(',')} "
+				print "#{mail_struct[:from].join(',')} --> #{mail_struct[:to].join(',')} "
 				puts "[Ignore/Add/Skip/Detail] ?"
 
 				i = STDIN.gets 
 				case i.strip
 				when /^[iI]$/ then # ignore
-					@contact_manager.ignore_contact remaining_emails.map{|e,t| e}
+					@contact_manager.ignore_contact remaining_emails
 					break
 				when /^[aA]$/ then # add
-					@contact_manager.keep_contact remaining_emails.map{|e,t| e}
+					@contact_manager.keep_contact remaining_emails
 					break
 				when /^[sS]$/ then #skip
 					break
@@ -161,4 +123,32 @@ class Epafh::Crawler
 		retry
 	end
 
+  def extract_body_mail body_parts
+		body_emails = Set.new
+		body_parts.each do |part|
+			next if part.content_type != 'text/plain'
+
+			part_emails = part.decoded.scan MAIL_REGEXP
+			if not part_emails.empty? then
+				body_emails.merge part_emails
+			end
+		end
+		body_emails
+  end
+
+  def display_header header_struct, remaining_emails
+		puts ""
+		header_struct.each do |key, list|
+			pp list
+			list.each do |addr|
+				addr_str = if remaining_emails.include? addr then
+								   	 addr.yellow.on_black
+							   	 else addr
+							   	 end
+				str = "%4s: %s" % [key.to_s.upcase, addr_str]
+				puts str
+			end
+		end
+		puts ""
+  end
 end
