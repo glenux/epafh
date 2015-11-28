@@ -11,7 +11,7 @@ class Epafh::App < Thor
       'password' => ''
     },
     'crm' => {
-			'baseurl'  => '',
+			'baseurl'  => 'http://crm.gnuside.com/',
 			'login'    => '',
 			'password' => ''
     } 
@@ -24,40 +24,22 @@ class Epafh::App < Thor
   desc 'config', 'Initialize configuration'
   def config
     puts "Welcome to Epafh !".green
-    cli = ::HighLine.new
     config = CONFIG_DEFAULT
 	  if File.exist? Epafh::EPAFI_CONFIG_FILE then
 	    config =  config.merge(YAML::load( File.open( Epafh::EPAFI_CONFIG_FILE ) ) || {})
 	  end
-	  params = {
-	    server: {desc: 'IMAP hostname ? ' },
-	    login: {desc: 'IMAP username ? ' },
+	  imap_params = {
+	    server:   {desc: 'IMAP hostname ? ' },
+	    login:    {desc: 'IMAP username ? ' },
 	    password: {desc: 'IMAP password ? ', hidden: true}
 	  }
-	  imap = config['imap']
-	  # Ask parameters
-    params.each.map {|param,values| [param.to_s,values] }
-    .each do |param, values| 
-      backup = imap[param]
-      backup_hidden = imap[param].gsub(/./,'*')
-      imap[param] = cli.ask(values[:desc]) do |q| 
-        # Disable echo if hidden enabled
-        q.echo = '*' if values[:hidden]
-
-        # Replace default value by stars if hidden
-        if not imap[param].empty? then
-          q.default = 
-            if (values[:hidden]) then backup_hidden
-            else imap[param]
-            end
-        end
-      end
-      # When RETURN is pressed, Highline uses default (starred)
-      # We have to replace it with the real value
-      if values[:hidden] and imap[param] = backup_hidden then
-        imap[param] = backup
-      end
-    end
+	  crm_params = {
+	    baseurl:  {desc: 'CRM base url ? ' },
+	    login:    {desc: 'CRM username ? ' },
+	    password: {desc: 'CRM password ? ', hidden: true}
+	  }
+	  config['imap'] = config_with_rules config['imap'], imap_params
+	  config['crm'] = config_with_rules config['crm'], crm_params
     FileUtils.mkdir_p(Epafh::EPAFI_CONFIG_DIR)
     File.open(Epafh::EPAFI_CONFIG_FILE, 'w'){|f| f.write(config.to_yaml)}
   end
@@ -81,6 +63,36 @@ class Epafh::App < Thor
 
 	private
 
+	# Ask parameters, with rule constraints
+	#
+	def config_with_rules cfg_in, rules
+    cli = ::HighLine.new
+	  cfg_out = cfg_in.clone
+	  # Loop parameter rules
+    rules.each.map {|param,values| [param.to_s,values] }
+    .each do |param, values| 
+      backup = cfg_out[param]
+      backup_hidden = cfg_out[param].gsub(/./,'*')
+      cfg_out[param] = cli.ask(values[:desc]) do |q| 
+        # Disable echo if hidden enabled
+        q.echo = '*' if values[:hidden]
+
+        # Replace default value by stars if hidden
+        if not cfg_out[param].empty? then
+          q.default = 
+            if (values[:hidden]) then backup_hidden
+            else cfg_out[param]
+            end
+        end
+      end
+      # When RETURN is pressed, Highline uses default (starred)
+      # We have to replace it with the real value
+      if values[:hidden] and cfg_out[param] == backup_hidden then
+        cfg_out[param] = backup
+      end
+    end
+    cfg_out
+	end
 
 	def parse_configuration
 		## Load configuration
