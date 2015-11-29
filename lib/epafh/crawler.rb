@@ -141,7 +141,7 @@ class Epafh::Crawler
   def display_header header_struct, remaining_emails
 		puts ""
 		header_struct.each do |key, list|
-			pp list
+			#pp list
 			list.each do |addr|
 				addr_str = if remaining_emails.include? addr then
 								   	 addr.yellow.on_black
