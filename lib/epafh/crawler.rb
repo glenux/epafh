@@ -38,11 +38,13 @@ class Epafh::Crawler
 
     ## Create association between extracted addreses and email part
 		mail_struct = { 
-			from: [m.from || []].flatten,
-			to:   [m.to || []].flatten,
-			cc:   [m.cc || []].flatten,
-			body: (body_emails.to_a || [])
+			from: [m.from || []].flatten.reject{|e| e.nil?},
+			to:   [m.to || []].flatten.reject{|e| e.nil?},
+			cc:   [m.cc || []].flatten.reject{|e| e.nil?},
+			body: (body_emails.to_a || []).reject{|e| e.nil?}
 		}
+		#pp m
+		#pp mail_struct
 		emails = Set.new
 		mail_struct.each {|key, val|  emails.merge val }
 		remaining_emails = emails.reject{|e| @contact_manager.include?(e) }
