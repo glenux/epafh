@@ -1,4 +1,6 @@
 
+require 'ruby-progressbar'
+
 class Epafh::Crawler
 	attr_reader :imap
 	attr_reader :contacts
@@ -51,7 +53,6 @@ class Epafh::Crawler
 
 		# Skip examination of no addresses are remaining
 		if remaining_emails.empty? then
-			print "."
 			return
 		end
 
@@ -114,10 +115,13 @@ class Epafh::Crawler
 	end
 
 	def examine_message_list mailbox_name, ids
+	  progressbar = ProgressBar.create(:total => ids.size)
+
     ids.each do |id|
       @imap.select mailbox_name #GYR: TEST
 			message = imap.fetch(id, [@saved_key])[0]
 			examine_message message
+			progressbar.increment
     end 
 	rescue IOError
 		# re-connect and try again

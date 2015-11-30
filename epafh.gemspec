@@ -30,5 +30,6 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "pry"
   spec.add_runtime_dependency "pry-rescue"
   spec.add_runtime_dependency "highline"
+  spec.add_runtime_dependency "ruby-progressbar"
 end
 
