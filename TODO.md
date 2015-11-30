@@ -3,6 +3,12 @@ TODO
 
 ## Features
 
+* Add support for mailbox exclude filter
+* Add support for email exclude filter 
+
+    support@.*
+    no-reply.*@.*
+
 * Add POP3 server support
 
 
